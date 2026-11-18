@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, pin_field, page_head %}
+{% block title %}Ubah PIN - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Ubah / Lupa PIN", url_for('wallet.profile')) }}
+<div class="card-soft">
+  <p class="muted small">Verifikasi dengan password akun Anda. Cara ini juga dipakai jika Anda lupa PIN.</p>
+  <form method="post" action="{{ url_for('wallet.change_pin') }}">
+    {{ csrf() }}
+    <div class="mb-3">
+      <label class="form-label" for="password">Password</label>
+      <input class="form-control" type="password" id="password" name="password" autocomplete="current-password" required>
+    </div>
+    {{ pin_field("pin", "PIN Baru (6 angka)") }}
+    {{ pin_field("pin2", "Ulangi PIN Baru") }}
+    <button class="btn-ew" type="submit">Simpan PIN Baru</button>
+  </form>
+</div>
+{% endblock %}

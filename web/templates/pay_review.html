@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, pin_field, page_head %}
+{% block title %}Konfirmasi Pembayaran - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Konfirmasi Pembayaran", url_for('pay.start', merchant=ps.merchant_id)) }}
+<div class="card-soft">
+  <div class="receipt-top">
+    <div class="stat-label">Total pembayaran</div>
+    <div class="receipt-amount">{{ ps.amount | rupiah }}</div>
+  </div>
+  <div class="kv"><span class="k">Penerima</span><span class="v">{{ ps.merchant_name }} ({{ ps.merchant_id }})</span></div>
+  <div class="kv"><span class="k">Pengirim</span><span class="v">{{ user.name }} ({{ user.id }})</span></div>
+  <div class="kv"><span class="k">Saldo saat ini</span><span class="v">{{ user.balance | rupiah }}</span></div>
+  <div class="kv"><span class="k">Sisa saldo</span><span class="v">{{ (user.balance - ps.amount) | rupiah }}</span></div>
+  <form method="post" action="{{ url_for('pay.confirm') }}" class="mt-3">
+    {{ csrf() }}
+    <input type="hidden" name="token" value="{{ ps.token }}">
+    {{ pin_field() }}
+    <button class="btn-lime" type="submit">Konfirmasi &amp; Bayar</button>
+  </form>
+  <a class="btn-soft mt-2" href="{{ url_for('pay.start', merchant=ps.merchant_id) }}">Ubah nominal</a>
+  <p class="small muted text-center mt-3 mb-0">Sesi pembayaran berlaku 5 menit.</p>
+</div>
+{% endblock %}

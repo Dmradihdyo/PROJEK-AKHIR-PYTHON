@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, pin_field, brand %}
+{% block title %}Daftar - Elektro Wallet{% endblock %}
+{% block content %}
+{{ brand() }}
+<h1 class="auth-title">Buat akun baru</h1>
+<p class="muted mb-4">Gratis dan siap dipakai dalam satu menit.</p>
+<div class="card-soft">
+  <form method="post" action="{{ url_for('auth.register') }}">
+    {{ csrf() }}
+    <div class="mb-3">
+      <label class="form-label" for="name">Nama Lengkap</label>
+      <input class="form-control" id="name" name="name" value="{{ form.get('name', '') }}" maxlength="60" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="user_id">User ID</label>
+      <input class="form-control" id="user_id" name="user_id" value="{{ form.get('user_id', '') }}" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" autocapitalize="off" required>
+      <div class="form-text">3-20 karakter: huruf, angka, atau garis bawah (_).</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="email">Email</label>
+      <input class="form-control" type="email" id="email" name="email" value="{{ form.get('email', '') }}" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="phone">Nomor HP (opsional)</label>
+      <input class="form-control" type="tel" id="phone" name="phone" value="{{ form.get('phone', '') }}" placeholder="081234567890">
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="password">Password</label>
+      <input class="form-control" type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+      <div class="form-text">Minimal 8 karakter, wajib huruf besar, huruf kecil, dan angka.</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="password2">Ulangi Password</label>
+      <input class="form-control" type="password" id="password2" name="password2" autocomplete="new-password" required>
+    </div>
+    {{ pin_field("pin", "PIN (6 angka)") }}
+    {{ pin_field("pin2", "Ulangi PIN") }}
+    <button class="btn-ew" type="submit">Daftar</button>
+  </form>
+  <div class="auth-links"><span>Sudah punya akun?</span><a href="{{ url_for('auth.login') }}">Masuk</a></div>
+</div>
+{% endblock %}

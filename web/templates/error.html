@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "_macros.html" import brand %}
+{% block title %}{{ title }} - Elektro Wallet{% endblock %}
+{% block content %}
+{{ brand() }}
+<div class="card-soft text-center py-5">
+  <h1 class="h4 fw-bold">{{ title }}</h1>
+  <p class="muted">{{ message }}</p>
+  <a class="btn-ew btn-inline" href="{{ url_for('auth.index') }}">Kembali ke Beranda</a>
+</div>
+{% endblock %}

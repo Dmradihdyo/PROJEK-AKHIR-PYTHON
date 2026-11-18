@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_macros.html" import page_head, csrf %}
+{% block title %}QR Saya - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("QR Code Saya", url_for('wallet.dashboard')) }}
+<div class="card-soft qr-card">
+  <div class="fw-bold">{{ user.name }}</div>
+  <div class="muted small mb-3">Tentukan nominal sebelum menampilkan QR, atau biarkan pembayar mengisi nominal.</div>
+
+  <form method="get" action="{{ url_for('wallet.my_qr') }}" class="qr-amount-form mb-3">
+    <label class="form-label" for="qr-amount">Nominal tetap (opsional)</label>
+    <input class="form-control" type="number" id="qr-amount" name="amount" min="{{ min_amount }}" max="{{ max_amount }}" step="1" inputmode="numeric" value="{{ amount_input }}" placeholder="Kosong = nominal diisi pembayar">
+    <div class="chips justify-content-center">
+      {% for value in (10000, 25000, 50000, 100000) %}
+      <button type="button" class="chip" data-fill="{{ value }}" data-target="qr-amount">{{ value | rupiah }}</button>
+      {% endfor %}
+    </div>
+    <button class="btn-lime mt-3" type="submit">Tampilkan QR</button>
+  </form>
+
+  {% if error_message %}
+    <div class="alert alert-danger text-start" role="alert">{{ error_message }}</div>
+  {% endif %}
+
+  {% if not host %}
+    <div class="alert alert-warning text-start" role="alert">
+      IP LAN laptop tidak terdeteksi. Sambungkan laptop ke Wi-Fi/hotspot, atau atur variabel
+      <code>EWALLET_HOST_IP</code> (contoh <code>192.168.1.10</code>). Alamat <code>localhost</code> tidak dapat dipakai di QR.
+    </div>
+  {% elif svg %}
+    <div class="qr-frame"><div class="qr-box">{{ svg }}</div></div>
+    <div class="url-box">{{ pay_url }}</div>
+    {% if fixed_amount %}
+      <p class="small muted mt-3 mb-2">Nominal tetap: <strong>{{ fixed_amount | rupiah }}</strong>. QR berlaku 5 menit dan nominalnya tidak dapat diubah pembayar.</p>
+    {% else %}
+      <p class="small muted mt-3 mb-2">Nominal akan diisi oleh pembayar setelah login.</p>
+    {% endif %}
+    <p class="small muted mb-2">HP dan laptop harus berada di jaringan Wi-Fi/hotspot yang sama. IP laptop: <strong>{{ host }}</strong></p>
+    {% if options | length > 1 %}
+    <p class="small mb-2">Jika QR tidak terbuka di HP, pilih IP lain:</p>
+    <div class="chips justify-content-center">
+      {% for ip in options %}
+      <a class="chip {{ 'active' if ip == host }}" href="{{ url_for('wallet.my_qr', ip=ip, amount=amount_input) }}">{{ ip }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <p class="small muted mt-3 mb-0">Gunakan Google Lens atau Kamera bawaan HP untuk membuka URL QR.</p>
+  {% else %}
+    <div class="alert alert-info text-start" role="alert">Masukkan nominal tetap jika pembayar cukup meninjau dan mengonfirmasi nominal tersebut.</div>
+  {% endif %}
+</div>
+{% endblock %}

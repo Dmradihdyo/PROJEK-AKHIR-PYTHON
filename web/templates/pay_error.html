@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Pembayaran Tidak Dapat Dilanjutkan - Elektro Wallet{% endblock %}
+{% block content %}
+<div class="card-soft text-center py-5">
+  <div class="receipt-badge failed">{{ icon('x', 'ic ic-lg') }}</div>
+  <h1 class="h5 fw-bold">Pembayaran tidak dapat dilanjutkan</h1>
+  <p class="muted">{{ message }}</p>
+  <div class="d-grid gap-2">
+    {% if merchant_id %}<a class="btn-ew" href="{{ url_for('pay.start', merchant=merchant_id) }}">Coba lagi</a>{% endif %}
+    <a class="btn-soft" href="{{ url_for('wallet.dashboard') if user else url_for('auth.login') }}">Kembali</a>
+  </div>
+</div>
+{% endblock %}

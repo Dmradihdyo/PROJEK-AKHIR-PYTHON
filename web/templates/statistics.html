@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, tx_item, page_head %}
+{% block title %}Statistik - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Statistik", url_for('wallet.dashboard')) }}
+
+<div class="seg-tabs">
+  <a class="{{ 'active' if tab == 'in' }}" href="{{ url_for('wallet.statistics', tab='in', **dates) }}">Pemasukan</a>
+  <a class="{{ 'active' if tab == 'out' }}" href="{{ url_for('wallet.statistics', tab='out', **dates) }}">Pengeluaran</a>
+</div>
+
+<form method="get" action="{{ url_for('wallet.statistics') }}" class="date-bar">
+  <input type="hidden" name="tab" value="{{ tab }}">
+  <span class="date-ico">{{ icon('calendar', 'ic ic-sm') }}</span>
+  <input type="date" name="from" value="{{ date_from }}" aria-label="Dari tanggal" required>
+  <span class="muted">&ndash;</span>
+  <input type="date" name="to" value="{{ date_to }}" aria-label="Sampai tanggal" required>
+  <button class="round-btn dark" type="submit" aria-label="Terapkan">{{ icon('check', 'ic ic-sm') }}</button>
+</form>
+<div class="chips">
+  {% for p in presets %}
+  <a class="chip {{ 'active' if p.start == date_from and p.end == date_to }}" href="{{ url_for('wallet.statistics', tab=tab, **{'from': p.start, 'to': p.end}) }}">{{ p.label }}</a>
+  {% endfor %}
+</div>
+
+<section class="card-soft stat-panel">
+  <div class="stat-label">Total {{ 'Pemasukan' if tab == 'in' else 'Pengeluaran' }}</div>
+  <div class="stat-total"><span id="stat-total">{{ total | rupiah }}</span>
+    <button type="button" class="eye-btn" data-toggle-balance="#stat-total" aria-label="Tampilkan atau sembunyikan total">{{ icon('eye', 'ic ic-sm') }}</button>
+  </div>
+
+  <div class="donut-wrap">
+    <svg class="donut" viewBox="0 0 42 42" role="img" aria-label="Diagram donat {{ 'pemasukan' if tab == 'in' else 'pengeluaran' }}">
+      <circle class="donut-bg" cx="21" cy="21" r="15.9155" fill="none" stroke-width="4.5"/>
+      {% for s in segments %}
+      <circle class="seg seg-{{ s.index }}" cx="21" cy="21" r="15.9155" fill="none" stroke-width="4.5"
+              stroke-dasharray="{{ s.pct }} {{ s.gap }}" stroke-dashoffset="{{ s.offset }}"/>
+      {% endfor %}
+    </svg>
+    <div class="donut-center">
+      {% if segments %}
+        <div class="big">{{ total | rupiah }}</div>
+        <div class="small">{{ tx_count }} transaksi</div>
+      {% else %}
+        <div class="small">Belum ada data<br>pada rentang ini</div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if legend %}
+  <div class="legend">
+    {% for item in legend %}
+    <span class="legend-row"><span class="dot dot-{{ item.index }}"></span>{{ item.label }} {{ item.share }}%</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+<div class="section-head"><h2 class="section-title">Riwayat Terbaru</h2><a class="see-all" href="{{ url_for('wallet.history', **{'from': date_from, 'to': date_to}) }}">Lihat semua</a></div>
+{% if recent %}
+<div class="tx-list">
+  {% for tx in recent %}{{ tx_item(tx) }}{% endfor %}
+</div>
+{% else %}
+<div class="card-soft empty">Tidak ada transaksi pada rentang ini.</div>
+{% endif %}
+{% endblock %}

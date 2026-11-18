@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, csrf, page_head %}
+{% block title %}Profil - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Profil", url_for('wallet.dashboard')) }}
+<div class="profile-top">
+  <div class="avatar avatar-lg">{{ user.name | initial }}</div>
+  <h2>{{ user.name }}</h2>
+  <div class="muted">@{{ user.id }}</div>
+</div>
+<div class="card-soft mb-3">
+  <div class="kv"><span class="k">Email</span><span class="v">{{ user.email }}</span></div>
+  <div class="kv"><span class="k">Nomor HP</span><span class="v">{{ user.phone or '-' }}</span></div>
+  <div class="kv"><span class="k">Status</span><span class="v">{{ user.status }}</span></div>
+  <div class="kv"><span class="k">Saldo</span><span class="v">{{ user.balance | rupiah }}</span></div>
+  <div class="kv"><span class="k">Dibuat</span><span class="v">{{ user.created_at | dt }}</span></div>
+</div>
+<div class="d-grid gap-2">
+  <a class="btn-soft" href="{{ url_for('wallet.complaints_page') }}">{{ icon('message', 'ic ic-sm') }} Buat Aduan</a>
+  <a class="btn-soft" href="{{ url_for('wallet.change_pin') }}">{{ icon('lock', 'ic ic-sm') }} Ubah / Lupa PIN</a>
+  <form method="post" action="{{ url_for('auth.logout') }}" class="m-0">
+    {{ csrf() }}
+    <button class="btn-soft btn-danger-soft" type="submit">{{ icon('logout', 'ic ic-sm') }} Keluar</button>
+  </form>
+</div>
+{% endblock %}

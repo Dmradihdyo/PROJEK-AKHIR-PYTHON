@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, tx_item %}
+{% block title %}Beranda - Elektro Wallet{% endblock %}
+{% block content %}
+<div class="home-bar">
+  <span class="brand-mini"><span class="brand-mark">{{ icon('bolt', 'ic ic-sm') }}</span> Elektro Wallet</span>
+  <a class="avatar-btn" href="{{ url_for('wallet.profile') }}" aria-label="Profil">{{ user.name | initial }}</a>
+</div>
+
+<h1 class="greeting">Hai, {{ user.name | first_name }}! &#128075;</h1>
+<div class="muted">Kelola keuangan Anda di sini.</div>
+
+<section class="balance-card" aria-label="Saldo">
+  <div class="bc-label">Saldo Saat Ini
+    <button type="button" class="eye-btn" data-toggle-balance="#balance" aria-label="Tampilkan atau sembunyikan saldo">{{ icon('eye', 'ic ic-sm') }}</button>
+  </div>
+  <div class="bc-amount" id="balance">{{ user.balance | rupiah }}</div>
+  <div class="bc-id">ID: {{ user.id }}</div>
+  <a class="bc-plus" href="{{ url_for('wallet.topup') }}" aria-label="Top up saldo">{{ icon('plus') }}</a>
+</section>
+
+<nav class="quick-actions" aria-label="Aksi cepat">
+  <a class="qa-item" href="{{ url_for('wallet.topup') }}"><span class="qa-icon">{{ icon('plus') }}</span>Top Up</a>
+  <a class="qa-item" href="{{ url_for('wallet.transfer') }}"><span class="qa-icon">{{ icon('send') }}</span>Transfer</a>
+  <a class="qa-item" href="{{ url_for('wallet.my_qr') }}"><span class="qa-icon">{{ icon('qr') }}</span>QR Saya</a>
+  <a class="qa-item" href="{{ url_for('wallet.statistics') }}"><span class="qa-icon">{{ icon('chart') }}</span>Statistik</a>
+</nav>
+
+<div class="section-head"><h2 class="section-title">Ringkasan Bulan Ini</h2><a class="see-all" href="{{ url_for('wallet.statistics') }}">Lihat detail</a></div>
+<div class="scroll-row">
+  <div class="stat-card first">
+    <span class="stat-pill">{{ icon('arrow-in', 'ic ic-sm') }} Pemasukan</span>
+    <div class="stat-label">Total bulan ini</div>
+    <div class="stat-value">{{ income | rupiah }}</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-pill">{{ icon('arrow-out', 'ic ic-sm') }} Pengeluaran</span>
+    <div class="stat-label">Total bulan ini</div>
+    <div class="stat-value">{{ expense | rupiah }}</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-pill">{{ icon('history', 'ic ic-sm') }} Transaksi</span>
+    <div class="stat-label">Jumlah bulan ini</div>
+    <div class="stat-value">{{ tx_count }}</div>
+  </div>
+</div>
+
+<div class="section-head"><h2 class="section-title">Transaksi</h2><a class="see-all" href="{{ url_for('wallet.history') }}">Lihat semua</a></div>
+{% if recent %}
+<div class="tx-list">
+  {% for tx in recent %}{{ tx_item(tx) }}{% endfor %}
+</div>
+{% else %}
+<div class="card-soft empty">Belum ada transaksi. Mulai dengan <a href="{{ url_for('wallet.topup') }}"><strong>Top Up</strong></a>.</div>
+{% endif %}
+{% endblock %}

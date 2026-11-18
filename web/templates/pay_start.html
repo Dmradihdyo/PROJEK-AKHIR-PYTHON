@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, page_head %}
+{% block title %}Bayar via QR - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Pembayaran QR", url_for('wallet.dashboard')) }}
+<div class="card-soft">
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="avatar">{{ merchant.name | initial }}</div>
+    <div><div class="small muted text-uppercase">Penerima dana</div><div class="fw-bold">{{ merchant.name }}</div><div class="small muted">ID: {{ merchant.id }}</div></div>
+  </div>
+  <p class="small muted">Saldo Anda: <strong>{{ user.balance | rupiah }}</strong></p>
+  <form method="post" action="{{ url_for('pay.review') }}">
+    {{ csrf() }}
+    <input type="hidden" name="merchant" value="{{ merchant.id }}">
+{% if fixed_amount %}
+    <div class="fixed-amount-card">
+      <div class="small muted">Nominal ditentukan oleh penerima</div>
+      <div class="receipt-amount">{{ fixed_amount | rupiah }}</div>
+      <div class="small muted">Anda hanya perlu meninjau dan mengonfirmasi pembayaran dengan PIN.</div>
+    </div>
+    <input type="hidden" name="fixed" value="1">
+    <input type="hidden" name="amount" value="{{ fixed_amount }}">
+    <input type="hidden" name="expires" value="{{ fixed_expires }}">
+    <input type="hidden" name="sig" value="{{ fixed_sig }}">
+{% else %}
+    <div class="mb-3">
+      <label class="form-label" for="amount">Nominal Pembayaran (Rp)</label>
+      <input class="form-control" type="number" id="amount" name="amount" min="1000" step="1" inputmode="numeric" placeholder="Contoh: 25000" required>
+      <div class="chips">
+        {% for value in (10000, 25000, 50000, 100000) %}
+        <button type="button" class="chip" data-fill="{{ value }}" data-target="amount">{{ value | rupiah }}</button>
+        {% endfor %}
+      </div>
+    </div>
+{% endif %}
+    <button class="btn-ew" type="submit">Lanjutkan</button>
+  </form>
+</div>
+{% endblock %}

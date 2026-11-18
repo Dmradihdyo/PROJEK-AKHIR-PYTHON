@@ -1,0 +1,72 @@
+{# Ikon garis (gaya Feather). Hanya atribut SVG, tanpa style inline, jadi aman untuk CSP. #}
+{% macro icon(name, cls="ic") -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{%- if name == 'home' %}<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/>
+{%- elif name == 'history' %}<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+{%- elif name == 'chart' %}<path d="M5 20V11"/><path d="M12 20V4"/><path d="M19 20v-6"/><path d="M3 20h18"/>
+{%- elif name == 'user' %}<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+{%- elif name == 'qr' %}<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3z"/><path d="M20 14v1"/><path d="M14 20h1"/><path d="M18 18h3v3"/>
+{%- elif name == 'plus' %}<path d="M12 5v14"/><path d="M5 12h14"/>
+{%- elif name == 'send' %}<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>
+{%- elif name == 'arrow-in' %}<path d="M17 7 7 17"/><path d="M17 17H7V7"/>
+{%- elif name == 'arrow-out' %}<path d="M7 17 17 7"/><path d="M7 7h10v10"/>
+{%- elif name == 'bolt' %}<path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="currentColor"/>
+{%- elif name == 'back' %}<path d="M15 18l-6-6 6-6"/>
+{%- elif name == 'logout' %}<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>
+{%- elif name == 'lock' %}<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+{%- elif name == 'check' %}<path d="M20 6 9 17l-5-5"/>
+{%- elif name == 'x' %}<path d="M18 6 6 18"/><path d="M6 6l12 12"/>
+{%- elif name == 'download' %}<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/>
+{%- elif name == 'calendar' %}<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>
+{%- elif name == 'eye' %}<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>
+{%- elif name == 'scan' %}<path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>
+{%- elif name == 'chevron-down' %}<path d="M6 9l6 6 6-6"/>
+{%- elif name == 'message' %}<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8"/><path d="M8 12h5"/>
+{%- elif name == 'wallet' %}<path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-1z"/><circle cx="16.5" cy="14" r="1.2"/>
+{%- elif name == 'printer' %}<path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="9" rx="2"/><path d="M7 15h10v6H7z"/>
+{%- endif %}</svg>
+{%- endmacro %}
+
+{% macro csrf() -%}
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{%- endmacro %}
+
+{% macro pin_field(name="pin", label="PIN (6 angka)") -%}
+<div class="mb-3">
+  <label class="form-label" for="{{ name }}">{{ label }}</label>
+  <input class="form-control pin-input" type="password" id="{{ name }}" name="{{ name }}"
+         inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6"
+         autocomplete="off" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;" required>
+</div>
+{%- endmacro %}
+
+{# Kepala halaman dalam: tombol kembali bulat + judul di tengah #}
+{% macro page_head(title, back_url) -%}
+<div class="page-head">
+  <a class="round-btn" href="{{ back_url }}" aria-label="Kembali">{{ icon('back') }}</a>
+  <h1>{{ title }}</h1>
+  <span></span>
+</div>
+{%- endmacro %}
+
+{# Logo untuk halaman publik #}
+{% macro brand() -%}
+<a class="brand" href="{{ url_for('auth.index') }}"><span class="brand-mark">{{ icon('bolt') }}</span> Elektro Wallet</a>
+{%- endmacro %}
+
+{# Satu baris transaksi. `who` = nama/ID lawan transaksi (opsional). #}
+{% macro tx_item(tx) -%}
+{%- set failed = tx.status == 'GAGAL' -%}
+<a class="tx-item" href="{{ url_for('wallet.transaction_detail', ref_no=tx.ref_no) }}">
+  <span class="tx-ico {{ 'failed' if failed else ('in' if tx.direction == 'IN' else 'out') }}">{{ icon('arrow-in' if tx.direction == 'IN' else 'arrow-out') }}</span>
+  <span class="tx-main">
+    <span class="tx-title">{{ tx | tx_label }}</span>
+    <span class="tx-sub">{{ tx.created_at | dt }}{% if tx.counterparty_id and tx.counterparty_id != '-' %} &middot; {{ tx.counterparty_id }}{% endif %}</span>
+    {%- if tx.note %}<span class="tx-note">{{ tx.note }}</span>{% endif %}
+  </span>
+  <span class="tx-amt {{ 'failed' if failed else ('in' if tx.direction == 'IN' else 'out') }}">
+    {{ '+' if tx.direction == 'IN' else '-' }}{{ tx.amount | rupiah }}
+    {%- if failed %}<span class="badge-fail">GAGAL</span>{% endif %}
+  </span>
+</a>
+{%- endmacro %}

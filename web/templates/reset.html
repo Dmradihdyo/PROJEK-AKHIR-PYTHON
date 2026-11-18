@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, brand %}
+{% block title %}Atur Ulang Password - Elektro Wallet{% endblock %}
+{% block content %}
+{{ brand() }}
+<h1 class="auth-title">Atur ulang password</h1>
+<p class="muted mb-4">Masukkan kode OTP 6 angka lalu pilih password baru.</p>
+<div class="card-soft">
+  <form method="post" action="{{ url_for('auth.reset') }}">
+    {{ csrf() }}
+    <div class="mb-3">
+      <label class="form-label" for="user_id">User ID</label>
+      <input class="form-control" id="user_id" name="user_id" value="{{ user_id }}" autocapitalize="off" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="otp">Kode OTP (6 angka)</label>
+      <input class="form-control pin-input" id="otp" name="otp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="password">Password Baru</label>
+      <input class="form-control" type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="password2">Ulangi Password Baru</label>
+      <input class="form-control" type="password" id="password2" name="password2" autocomplete="new-password" required>
+    </div>
+    <button class="btn-ew" type="submit">Simpan Password Baru</button>
+  </form>
+</div>
+{% endblock %}

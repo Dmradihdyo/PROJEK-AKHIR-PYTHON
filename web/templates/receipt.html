@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, page_head %}
+{% block title %}Bukti Transaksi - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Bukti Transaksi", url_for('wallet.dashboard')) }}
+{%- set failed = tx.status == 'GAGAL' %}
+<div class="card-soft">
+  <div class="receipt-top">
+    <div class="receipt-badge {{ 'failed' if failed }}">{{ icon('x' if failed else 'check', 'ic ic-lg') }}</div>
+    <div class="stat-label">{{ tx | tx_label }}</div>
+    <div class="receipt-amount {{ 'in' if tx.direction == 'IN' and not failed }}">{{ tx.amount | rupiah }}</div>
+    <span class="status-pill {{ 'gagal' if failed }}">{{ tx.status }}</span>
+  </div>
+  <div class="kv"><span class="k">No. Referensi</span><span class="v">{{ tx.ref_no }}</span></div>
+  <div class="kv"><span class="k">Waktu</span><span class="v">{{ tx.created_at | dt }}</span></div>
+  <div class="kv"><span class="k">Akun</span><span class="v">{{ user.name }} ({{ user.id }})</span></div>
+  {% if other %}
+  <div class="kv"><span class="k">{{ 'Pengirim' if tx.direction == 'IN' else 'Penerima' }}</span><span class="v">{{ other.name }} ({{ other.id }})</span></div>
+  {% endif %}
+  {% if tx.note %}<div class="kv"><span class="k">Catatan</span><span class="v">{{ tx.note }}</span></div>{% endif %}
+</div>
+<div class="d-grid gap-2 mt-3 no-print">
+  <button class="btn-ew" type="button" data-print>{{ icon('printer', 'ic ic-sm') }} Simpan / Cetak Bukti</button>
+  <a class="btn-soft" href="{{ url_for('wallet.dashboard') }}">Kembali ke Beranda</a>
+</div>
+{% endblock %}

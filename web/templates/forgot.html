@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, brand %}
+{% block title %}Lupa Password - Elektro Wallet{% endblock %}
+{% block content %}
+{{ brand() }}
+<h1 class="auth-title">Lupa password?</h1>
+<p class="muted mb-4">Masukkan User ID dan email terdaftar. Kode OTP akan dibuat (simulasi: ditampilkan di terminal server).</p>
+<div class="card-soft">
+  <form method="post" action="{{ url_for('auth.forgot') }}">
+    {{ csrf() }}
+    <div class="mb-3">
+      <label class="form-label" for="user_id">User ID</label>
+      <input class="form-control" id="user_id" name="user_id" autocapitalize="off" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="email">Email</label>
+      <input class="form-control" type="email" id="email" name="email" required>
+    </div>
+    <button class="btn-ew" type="submit">Minta Kode OTP</button>
+  </form>
+  <div class="auth-links"><a href="{{ url_for('auth.login') }}">Kembali ke login</a></div>
+</div>
+{% endblock %}

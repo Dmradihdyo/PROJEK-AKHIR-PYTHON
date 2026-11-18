@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, brand %}
+{% block title %}Masuk - Elektro Wallet{% endblock %}
+{% block content %}
+{{ brand() }}
+<h1 class="auth-title">Selamat datang kembali</h1>
+<p class="muted mb-4">Masuk untuk mengelola saldo dan pembayaran Anda.</p>
+<div class="card-soft">
+  <form method="post" action="{{ url_for('auth.login') }}">
+    {{ csrf() }}
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+    <div class="mb-3">
+      <label class="form-label" for="user_id">User ID</label>
+      <input class="form-control" id="user_id" name="user_id" autocomplete="username" autocapitalize="off" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="password">Password</label>
+      <input class="form-control" type="password" id="password" name="password" autocomplete="current-password" required>
+    </div>
+    <button class="btn-ew" type="submit">Masuk</button>
+  </form>
+  <div class="auth-links">
+    <a href="{{ url_for('auth.register') }}">Buat akun baru</a>
+    <a href="{{ url_for('auth.forgot') }}">Lupa password?</a>
+  </div>
+</div>
+{% endblock %}

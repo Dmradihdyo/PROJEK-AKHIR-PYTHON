@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, pin_field, page_head %}
+{% block title %}Top Up - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Top Up Saldo", url_for('wallet.dashboard')) }}
+<div class="card-soft">
+  <p class="muted small mb-3">Saldo saat ini: <strong>{{ user.balance | rupiah }}</strong>. Top up ini simulasi (tidak terhubung ke bank).</p>
+  <form method="post" action="{{ url_for('wallet.topup') }}">
+    {{ csrf() }}
+    <div class="mb-3">
+      <label class="form-label" for="amount">Nominal (Rp)</label>
+      <input class="form-control" type="number" id="amount" name="amount" min="{{ min_amount }}" max="{{ max_amount }}" step="1" inputmode="numeric" value="{{ form.get('amount', '') }}" required>
+      <div class="chips">
+        {% for value in (20000, 50000, 100000, 250000) %}
+        <button type="button" class="chip" data-fill="{{ value }}" data-target="amount">{{ value | rupiah }}</button>
+        {% endfor %}
+      </div>
+      <div class="form-text mt-2">Minimal {{ min_amount | rupiah }}, maksimal {{ max_amount | rupiah }} per transaksi.</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="method">Metode</label>
+      <select class="form-select" id="method" name="method" required>
+        {% for key, label in methods.items() %}
+        <option value="{{ key }}" {{ 'selected' if form.get('method') == key }}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {{ pin_field() }}
+    <button class="btn-lime" type="submit">Top Up Sekarang</button>
+  </form>
+</div>
+{% endblock %}

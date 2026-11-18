@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "_macros.html" import page_head, csrf %}
+{% block title %}Aduan - Elektro Wallet{% endblock %}
+{% block content %}
+{{ page_head("Aduan Saya", url_for('wallet.profile')) }}
+<div class="card-soft mb-3">
+  <h2 class="section-title mb-2">Sampaikan Aduan</h2>
+  <p class="small muted">Gunakan menu ini jika ada masalah transaksi, akun, atau QR. Jangan tulis password atau PIN.</p>
+  <form method="post" action="{{ url_for('wallet.complaints_page') }}">
+    {{ csrf() }}
+    <div class="mb-3">
+      <label class="form-label" for="category">Kategori</label>
+      <select class="form-select" id="category" name="category" required>
+        <option value="">Pilih kategori</option>
+        {% for category in categories %}<option value="{{ category }}" {{ 'selected' if form.get('category') == category }}>{{ category.replace('_', ' ').title() }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="transaction_ref">No. Referensi transaksi (opsional)</label>
+      <input class="form-control" id="transaction_ref" name="transaction_ref" value="{{ form.get('transaction_ref', '') }}" maxlength="32" placeholder="Contoh: TRX1001">
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="message">Pesan aduan</label>
+      <textarea class="form-control" id="message" name="message" rows="5" maxlength="1000" minlength="10" required>{{ form.get('message', '') }}</textarea>
+    </div>
+    <button class="btn-ew" type="submit">Kirim Aduan</button>
+  </form>
+</div>
+
+<div class="section-head"><h2 class="section-title">Aduan Sebelumnya</h2></div>
+{% if complaints %}
+<div class="tx-list">
+  {% for item in complaints %}
+  <div class="card-soft complaint-item">
+    <div class="d-flex justify-content-between gap-2"><strong>#{{ item.id }} · {{ item.category.title() }}</strong><span class="status-pill {{ 'gagal' if item.status == 'REJECTED' }}">{{ item.status }}</span></div>
+    <p class="small mt-2 mb-1">{{ item.message }}</p>
+    {% if item.transaction_ref %}<div class="small muted">Ref: {{ item.transaction_ref }}</div>{% endif %}
+    {% if item.admin_note %}<div class="small mt-2"><strong>Catatan admin:</strong> {{ item.admin_note }}</div>{% endif %}
+    <div class="small muted mt-2">{{ item.created_at }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}<div class="card-soft empty">Belum ada aduan.</div>{% endif %}
+{% endblock %}

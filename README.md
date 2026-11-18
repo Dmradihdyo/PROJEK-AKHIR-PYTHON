@@ -80,7 +80,7 @@ Console dan web **tidak memiliki logika sendiri**. Keduanya memanggil fungsi yan
 | Profil dan ubah PIN | Web + Console | Verifikasi password sebelum ganti PIN. Input rahasia Console tampil `*` |
 
 
-### 3.3 Fitur Admin (Console)
+### 3.2 Fitur Admin (Console)
 ```
 ================ ELEKTRO WALLET - ADMIN ================
  1. Ringkasan sistem (jumlah akun, total saldo, transaksi gagal, top up hari ini)
